@@ -104,7 +104,7 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                   "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
                   Setting = $enumSetting
                }
-            }
+            } # end enum
 
             'decimal' {
                # A simple numeric option that limits
@@ -131,7 +131,7 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                      Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- Value Range: $($element.decimal.minValue)-$($element.decimal.maxValue) -->`"/>`n"
                   }
                }
-            }
+            } # end decimal
 
             'text' {
                # Need to check if the Max Length is set
@@ -150,10 +150,10 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                      Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- [String] Max Length: $($element.text.maxLength) -->`"/>`n"
                   }
                }
-            }
+            } # end text
          } # end element switch
-      } # foreach element
-   } # if element
+      } # end foreach element
+   } # end if element
 
    # Simple Enable only setting
    else {

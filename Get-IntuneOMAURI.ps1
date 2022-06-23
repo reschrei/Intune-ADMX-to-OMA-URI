@@ -4,9 +4,10 @@
 .DESCRIPTION
    Easily convert ADMX files into OMA-URI for Microsoft Intune. Feed this script a admx file and it will output all of the OMI-URI and the options available for each setting.
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   .\Get-IntuneOMAURI.ps1 -ADMXFile 'C:\temp\admx template\GoogleChrome.admx -AppName GoogleChrome
+
+   This example pulls in the GoogleChrome.admx file and will open a grid view of all the settings afterwards.
+   The AppName helps create the ADMX Ingestion URI.
 #>
 
 Param(
@@ -29,7 +30,7 @@ Param(
     [switch]$CsvExport = $false
 )
 
-# Results Array
+# Results storage
 $results = @()
 
 # Lets build out the OMA-URI for Ingesting the ADMX file
@@ -41,10 +42,6 @@ $settingURI = "./Device/Vendor/MSFT/Policy/Config/{0}~Policy<category>/" -f $App
 $categories = $admxData.policyDefinitions.categories.category
 
 # Need to build out Categories to be able to build the setting OMA-URI properly
-
-# Items to Check for
-# _ enableList & disableList
-# X elements (typically text fields)
 
 foreach ($policy in $admxData.policyDefinitions.policies.policy) {
 
@@ -100,8 +97,7 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
       
                      }
                   }
-               }
-               
+               }               
 
                $results += [PSCustomObject]@{
                   Name = $policy.name

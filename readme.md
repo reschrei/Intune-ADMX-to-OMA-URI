@@ -1,6 +1,10 @@
 # Microsoft Intune - ADMX to OMA-URI Generator
 
-\*Disclaimer - This tool is very early on in development. There are likely certain ADMX policies out there that might not play well with this script. Most ADMX policies should be able to be processed by this script.
+### Disclaimer
+
+* There are likely certain ADMX policies out there that might not play well with this script. Most ADMX policies should be able to be processed by this script.
+
+* This was created as a learning experience. There are solutions out there for this.
 
 ## Background
 

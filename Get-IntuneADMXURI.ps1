@@ -35,7 +35,7 @@ $results = @()
 
 # Lets build out the OMA-URI for Ingesting the ADMX file
 $admxIngestionURI = "./Device/Vendor/MSFT/Policy/ConfigOperations/ADMXInstall/{0}/Policy/{1}" -f $AppName,"$($AppName)Admx"
-$settingURI = "./Device/Vendor/MSFT/Policy/Config/{0}~Policy<category>/" -f $AppName
+$settingURI = "Vendor/MSFT/Policy/Config/{0}~Policy<category>/" -f $AppName
 
 # Prep the ADMX file for parsing
 [xml]$admxData = Get-Content $ADMXFile
@@ -44,6 +44,26 @@ $categories = $admxData.policyDefinitions.categories.category
 # Need to build out Categories to be able to build the setting OMA-URI properly
 
 foreach ($policy in $admxData.policyDefinitions.policies.policy) {
+
+   # Identify Scope of the Policy
+   # Machine, Device, User, or Both
+   switch -Regex ($policy.class) {
+      'User' {
+         $policyScope = 'User'
+      }
+      'Device|Machine' {
+         $policyScope = 'Device'
+      }
+      'Both' {
+         $policyScope = @(
+            'User',
+            'Device'
+         )
+      }
+   }
+
+   # Create Policy OMA-URI
+   $policyOmaUri = $policyScope | Foreach-Object { "./$_/$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)" }
 
    # building OMA-URI for this policy
    [string]$policyCategoryURI = "~$($policy.ParentCategory.ref)"
@@ -62,9 +82,10 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
    if ($null -ne $policy.enabledList) {
 
       # Take a look at the Enabled/Disable policies
+      
       $results += [PSCustomObject]@{
          Name = $policy.name
-         "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+         "OMA-URI" = $policyOmaUri | Out-String
          Setting = "<enabled/> OR <disabled/>"
       }
       continue
@@ -101,7 +122,7 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
 
                $results += [PSCustomObject]@{
                   Name = $policy.name
-                  "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                  "OMA-URI" = $policyOmaUri | Out-String
                   Setting = $enumSetting
                }
             } # end enum
@@ -113,21 +134,21 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                if ($null -eq $element.decimal.minValue) {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
-                     "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                     "OMA-URI" = $policyOmaUri | Out-String
                      Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- Max Value of: $($element.decimal.maxValue) -->`"/>`n"
                   }
                }
                elseif ($null -eq $element.decimal.maxValue) {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
-                     "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                     "OMA-URI" = $policyOmaUri | Out-String
                      Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- Min Value of: $($element.decimal.minValue) -->`"/>`n"
                   }
                }
                else {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
-                     "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                     "OMA-URI" = $policyOmaUri | Out-String
                      Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- Value Range: $($element.decimal.minValue)-$($element.decimal.maxValue) -->`"/>`n"
                   }
                }
@@ -139,14 +160,14 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                if ($null -eq $element.text.maxLength) {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
-                     "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                     "OMA-URI" = $policyOmaUri | Out-String
                      Setting = "<enabled/> <data id=$($element.text.id) value=`"<!-- [String] -->`"/>`n"
                   }
                }
                else {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
-                     "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+                     "OMA-URI" = $policyOmaUri | Out-String
                      Setting = "<enabled/> <data id=$($element.text.id) value=`"<!-- [String] Max Length: $($element.text.maxLength) -->`"/>`n"
                   }
                }
@@ -161,7 +182,7 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
       # elements, enableList, and disableList properties are not present, this is simply an enable rule
       $results += [PSCustomObject]@{
          Name = $policy.name
-         "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
+         "OMA-URI" = $policyOmaUri | Out-String
          Setting = "<enabled/>"
       }
       continue

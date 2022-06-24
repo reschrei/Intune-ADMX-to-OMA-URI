@@ -140,14 +140,14 @@ foreach ($policy in $admxData.policyDefinitions.policies.policy) {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
                      "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
-                     Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- [String] -->`"/>`n"
+                     Setting = "<enabled/> <data id=$($element.text.id) value=`"<!-- [String] -->`"/>`n"
                   }
                }
                else {
                   $results += [PSCustomObject]@{
                      Name = $policy.name
                      "OMA-URI" = "$($settingURI.Replace('<category>',$policyCategoryURI))$($policy.name)"
-                     Setting = "<enabled/> <data id=$($element.decimal.id) value=`"<!-- [String] Max Length: $($element.text.maxLength) -->`"/>`n"
+                     Setting = "<enabled/> <data id=$($element.text.id) value=`"<!-- [String] Max Length: $($element.text.maxLength) -->`"/>`n"
                   }
                }
             } # end text

@@ -18,6 +18,12 @@ The script is pretty straight forward. Feed it a few parameters and it will gene
 | AppName | String |The Name of the app or component the ADMX is managing | Yes |
 | CsvExport | Switch | If specified, exports a CSV to the working directory with the settings | No |
 
+## Outputs
+
+* **AppName-ADMX-Ingestion-OMA-URI.txt** - The ADMX Ingestion file will be placed in the script directory.
+* **Grid** - A Grid window will open with the results if the script is ran without the `-CsvExport` parameter.
+* **[Optional]  AppName-ADMX-Intune-Settings.csv** - If the `-CsvExport` Parameter is specified, the settings csv will be placed in the script directory instead of the default Grid option.
+
 ## Example
 
 ```powershell

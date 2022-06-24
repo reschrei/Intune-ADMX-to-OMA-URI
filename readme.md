@@ -21,5 +21,5 @@ The script is pretty straight forward. Feed it a few parameters and it will gene
 ## Example
 
 ```powershell
-PS C:\workingDirectory> .\Get-IntuneADMXURI.ps1 -ADMXFile 'C:\temp\admx template\GoogleChrome.admx -AppName GoogleChrome
+PS C:\workingDirectory> .\Get-IntuneADMXURI.ps1 -ADMXFile 'C:\temp\admx template\GoogleChrome.admx' -AppName GoogleChrome
 ```

@@ -19,6 +19,7 @@ The script is pretty straight forward. Feed it a few parameters and it will gene
 | CsvExport | Switch | If specified, exports a CSV to the working directory with the settings | No |
 
 ## Example
-```
-PS C:\workingDirectory> .\Get-IntuneOMAURI.ps1 -ADMXFile 'C:\temp\admx template\GoogleChrome.admx -AppName GoogleChrome
+
+```powershell
+PS C:\workingDirectory> .\Get-IntuneADMXURI.ps1 -ADMXFile 'C:\temp\admx template\GoogleChrome.admx -AppName GoogleChrome
 ```
